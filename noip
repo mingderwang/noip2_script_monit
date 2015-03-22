@@ -1,0 +1,58 @@
+#! /bin/sh
+PIDFILE='/usr/local/var/run/noip.pid'
+
+
+start() {
+      echo "Starting noip2\n"
+        /usr/local/bin/noip2
+        for i in `noip2 -S 2>&1 | grep Process | awk '{print $2}' | tr -d ','`
+        do
+          echo $i > $PIDFILE 
+        done
+}
+
+stop() {
+        echo -n "Shutting down noip2\n"
+        for i in `noip2 -S 2>&1 | grep Process | awk '{print $2}' | tr -d ','`
+        do
+          noip2 -K $i
+	  if [ -f $PIDFILE ]; then
+            rm $PIDFILE
+	  fi
+        done
+}
+
+restart() {
+	stop
+    timeout=3
+    while ps aux | grep 'noip2' | grep -e 'local'; do
+      echo -n '.'
+	timeout=$((timeout-1))
+      if [ $timeout -lt '1' ]; then return; fi
+      sleep 1
+    done;
+	start
+}
+
+case "$1" in
+    start)
+	start
+    ;;
+    stop)
+	stop
+    ;;
+    restart)
+	restart
+    ;;
+    status)
+        if [ -f $PIDFILE  ]; then
+          echo "[noip2 is running]"
+        else
+          echo "[noip2 is not running]"
+        fi
+    ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+esac
+exit 0
