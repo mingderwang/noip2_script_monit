@@ -17,6 +17,24 @@ If you don't know how to use monit, please check this URL: http://www.tecmint.co
 2. copy noip to /etc/init.d
 3. reload your monit and make sure noip task is running with "sudo monit summary" command.
 
+## Test
+
+```
+$ sudo monit summary
+The Monit daemon 5.6 uptime: 4d 1h 6m 
+
+Process 'noip'                      Running
+System 'www.example.com'            Running
+
+```
+
+## Contribute
+
+Welcome to fork this repo and using pull requests to contribute your code. Thanks in advance. 
+
+* Fork a repo: https://help.github.com/articles/fork-a-repo/
+* Using pull requests: https://help.github.com/articles/using-pull-requests/ 
+
 ## Known Bugs 
 1. It could fail on restart sometime. (with a very low chance)
 
