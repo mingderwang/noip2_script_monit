@@ -24,9 +24,10 @@ stop() {
 
 restart() {
 	stop
-    timeout=3
+    timeout=30
     while ps aux | grep 'noip2' | grep -e 'local'; do
       echo -n '.'
+        stop
 	timeout=$((timeout-1))
       if [ $timeout -lt '1' ]; then return; fi
       sleep 1
