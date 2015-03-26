@@ -24,7 +24,7 @@ stop() {
           echo "[pidfile exist]"
 	else
           echo "[pidfile does not exist]"
-          killproc -TERM /usr/local/bin/noip2
+	  kill -9 `ps -ef | grep noip2 | grep -v grep |  awk '{print $2}' `
         fi
         for i in `sudo noip2 -S 2>&1 | grep Process | awk '{print $2}' | tr -d ','`
         do
