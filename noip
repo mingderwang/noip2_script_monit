@@ -5,15 +5,28 @@ PIDFILE='/usr/local/var/run/noip.pid'
 start() {
       echo "Starting noip2\n"
         /usr/local/bin/noip2
-        for i in `noip2 -S 2>&1 | grep Process | awk '{print $2}' | tr -d ','`
+    timeout=30
+    while ps aux | grep 'noip2' | grep -e 'local'; do
+      echo -n '>'
+        for i in `sudo noip2 -S 2>&1 | grep Process | awk '{print $2}' | tr -d ','`
         do
           echo $i > $PIDFILE 
         done
+	timeout=$((timeout-1))
+      if [ $timeout -lt '1' ]; then return; fi
+      sleep 1
+    done;
 }
 
 stop() {
         echo -n "Shutting down noip2\n"
-        for i in `noip2 -S 2>&1 | grep Process | awk '{print $2}' | tr -d ','`
+        if [ -f $PIDFILE  ]; then
+          echo "[pidfile exist]"
+	else
+          echo "[pidfile does not exist]"
+          killproc -TERM /usr/local/bin/noip2
+        fi
+        for i in `sudo noip2 -S 2>&1 | grep Process | awk '{print $2}' | tr -d ','`
         do
           noip2 -K $i
 	  if [ -f $PIDFILE ]; then
